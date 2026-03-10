@@ -69,3 +69,17 @@ I enjoy analyzing security events, investigating alerts, and detecting malicious
 ## Projects
 - Detection Lab
 - SOC Automation Project
+
+---
+## 📫 Connect
+
+<p align="center">
+
+<a href="https://github.com/yu-192">
+<img src="https://img.shields.io/badge/GitHub-black?style=for-the-badge&logo=github">
+</a>
+
+<a href="https://linkedin.com/in/YOURLINKEDIN">
+<img src="https://img.shields.io/badge/LinkedIn-blue?style=for-the-badge&logo=linkedin">
+</a>
+</p>
