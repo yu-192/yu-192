@@ -1,0 +1,182 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-mono, monospace); }
+  .sheet { padding: 1rem; }
+  .header { text-align: center; margin-bottom: 1.2rem; border-bottom: 2px solid var(--color-border-primary); padding-bottom: 0.8rem; }
+  .header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); letter-spacing: 2px; text-transform: uppercase; }
+  .header p { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+  .category { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; }
+  .cat-header { padding: 6px 12px; font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; }
+  .cat-header.web { background: #E6F1FB; color: #0C447C; border-bottom: 1px solid #B5D4F4; }
+  .cat-header.email { background: #EEEDFE; color: #3C3489; border-bottom: 1px solid #CECBF6; }
+  .cat-header.file { background: #EAF3DE; color: #27500A; border-bottom: 1px solid #C0DD97; }
+  .cat-header.remote { background: #FAEEDA; color: #633806; border-bottom: 1px solid #FAC775; }
+  .cat-header.dns { background: #E1F5EE; color: #085041; border-bottom: 1px solid #9FE1CB; }
+  .cat-header.auth { background: #FBEAF0; color: #72243E; border-bottom: 1px solid #F4C0D1; }
+  .cat-header.net { background: #FAECE7; color: #712B13; border-bottom: 1px solid #F5C4B3; }
+  .cat-header.db { background: #F1EFE8; color: #444441; border-bottom: 1px solid #D3D1C7; }
+  .cat-header.monitor { background: #FCEBEB; color: #791F1F; border-bottom: 1px solid #F7C1C1; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  td { padding: 5px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .port { font-weight: 500; width: 90px; font-family: var(--font-mono); color: var(--color-text-secondary); font-size: 11px; white-space: nowrap; }
+  .proto-name { font-weight: 500; width: 100px; font-size: 12px; }
+  .desc { color: var(--color-text-secondary); font-size: 11px; }
+  .tcp { color: #185FA5; font-size: 10px; font-weight: 500; }
+  .udp { color: #3B6D11; font-size: 10px; font-weight: 500; }
+  .both { color: #854F0B; font-size: 10px; font-weight: 500; }
+  .legend { display: flex; gap: 16px; justify-content: center; margin-top: 10px; font-size: 11px; flex-wrap: wrap; }
+  .legend span { display: flex; align-items: center; gap: 4px; color: var(--color-text-secondary); }
+  .flag { font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: 500; }
+  .alert { background: #FCEBEB; color: #791F1F; font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: 500; }
+  @media print {
+    .sheet { padding: 0.5rem; }
+    .grid { gap: 8px; }
+    td { padding: 3px 8px; }
+  }
+</style>
+<div class="sheet">
+  <h2 class="sr-only">SOC Analyst ports and protocols reference sheet</h2>
+  <div class="header">
+    <h1>SOC Analyst — Ports &amp; Protocols Reference</h1>
+    <p>Essential ports every SOC analyst must know · TCP/UDP · Common attack vectors</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="category">
+      <div class="cat-header web">🌐 Web &amp; HTTP</div>
+      <table>
+        <tr><td class="port">80 <span class="tcp">TCP</span></td><td class="proto-name">HTTP</td><td class="desc">Unencrypted web traffic — look for cleartext creds, malware C2</td></tr>
+        <tr><td class="port">443 <span class="tcp">TCP</span></td><td class="proto-name">HTTPS</td><td class="desc">Encrypted web — inspect certs, detect TLS tunneling</td></tr>
+        <tr><td class="port">8080 <span class="tcp">TCP</span></td><td class="proto-name">HTTP-Alt</td><td class="desc">Proxy/web apps — often used by malware to blend in</td></tr>
+        <tr><td class="port">8443 <span class="tcp">TCP</span></td><td class="proto-name">HTTPS-Alt</td><td class="desc">Alt HTTPS — watch for rogue admin panels</td></tr>
+        <tr><td class="port">3128 <span class="tcp">TCP</span></td><td class="proto-name">Squid Proxy</td><td class="desc">Web proxy — tunneling, data exfiltration path <span class="alert">⚠ exfil</span></td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header email">📧 Email</div>
+      <table>
+        <tr><td class="port">25 <span class="tcp">TCP</span></td><td class="proto-name">SMTP</td><td class="desc">Mail relay — spam, phishing, lateral movement pivot</td></tr>
+        <tr><td class="port">465 <span class="tcp">TCP</span></td><td class="proto-name">SMTPS</td><td class="desc">Encrypted SMTP — SSL</td></tr>
+        <tr><td class="port">587 <span class="tcp">TCP</span></td><td class="proto-name">SMTP Sub</td><td class="desc">Authenticated mail submission — watch for exfil</td></tr>
+        <tr><td class="port">110 <span class="tcp">TCP</span></td><td class="proto-name">POP3</td><td class="desc">Email retrieval — unencrypted, creds in cleartext</td></tr>
+        <tr><td class="port">995 <span class="tcp">TCP</span></td><td class="proto-name">POP3S</td><td class="desc">POP3 over SSL</td></tr>
+        <tr><td class="port">143 <span class="tcp">TCP</span></td><td class="proto-name">IMAP</td><td class="desc">Email access — brute force target</td></tr>
+        <tr><td class="port">993 <span class="tcp">TCP</span></td><td class="proto-name">IMAPS</td><td class="desc">IMAP over SSL</td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header file">📁 File Transfer</div>
+      <table>
+        <tr><td class="port">20 <span class="tcp">TCP</span></td><td class="proto-name">FTP Data</td><td class="desc">FTP data transfer — cleartext <span class="alert">⚠ creds exposed</span></td></tr>
+        <tr><td class="port">21 <span class="tcp">TCP</span></td><td class="proto-name">FTP Control</td><td class="desc">FTP commands — anonymous login attack vector</td></tr>
+        <tr><td class="port">22 <span class="tcp">TCP</span></td><td class="proto-name">SFTP / SSH</td><td class="desc">Secure shell + file transfer — brute force, key theft</td></tr>
+        <tr><td class="port">69 <span class="udp">UDP</span></td><td class="proto-name">TFTP</td><td class="desc">Trivial FTP — no auth, used in PXE boot &amp; C2 drops</td></tr>
+        <tr><td class="port">445 <span class="tcp">TCP</span></td><td class="proto-name">SMB</td><td class="desc">File shares — EternalBlue, ransomware spread <span class="alert">⚠ critical</span></td></tr>
+        <tr><td class="port">139 <span class="tcp">TCP</span></td><td class="proto-name">NetBIOS-SSN</td><td class="desc">Legacy SMB over NetBIOS — lateral movement</td></tr>
+        <tr><td class="port">2049 <span class="both">TCP/UDP</span></td><td class="proto-name">NFS</td><td class="desc">Network file system — misconfig leads to data exposure</td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header remote">🖥️ Remote Access</div>
+      <table>
+        <tr><td class="port">22 <span class="tcp">TCP</span></td><td class="proto-name">SSH</td><td class="desc">Encrypted remote shell — brute force, key compromise</td></tr>
+        <tr><td class="port">23 <span class="tcp">TCP</span></td><td class="proto-name">Telnet</td><td class="desc">Cleartext remote — legacy, never use <span class="alert">⚠ insecure</span></td></tr>
+        <tr><td class="port">3389 <span class="tcp">TCP</span></td><td class="proto-name">RDP</td><td class="desc">Windows remote desktop — BlueKeep, ransomware entry <span class="alert">⚠ critical</span></td></tr>
+        <tr><td class="port">5900 <span class="tcp">TCP</span></td><td class="proto-name">VNC</td><td class="desc">Remote desktop — often unencrypted, weak auth</td></tr>
+        <tr><td class="port">5985 <span class="tcp">TCP</span></td><td class="proto-name">WinRM HTTP</td><td class="desc">Windows remote mgmt — PS remoting, lateral movement</td></tr>
+        <tr><td class="port">5986 <span class="tcp">TCP</span></td><td class="proto-name">WinRM HTTPS</td><td class="desc">WinRM over SSL</td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header dns">🔍 DNS &amp; Directory</div>
+      <table>
+        <tr><td class="port">53 <span class="both">TCP/UDP</span></td><td class="proto-name">DNS</td><td class="desc">Name resolution — DNS tunneling, C2 via TXT records <span class="alert">⚠ exfil</span></td></tr>
+        <tr><td class="port">389 <span class="both">TCP/UDP</span></td><td class="proto-name">LDAP</td><td class="desc">Directory — cleartext AD queries, credential harvesting</td></tr>
+        <tr><td class="port">636 <span class="tcp">TCP</span></td><td class="proto-name">LDAPS</td><td class="desc">LDAP over SSL</td></tr>
+        <tr><td class="port">3268 <span class="tcp">TCP</span></td><td class="proto-name">Global Cat</td><td class="desc">AD Global Catalog — domain enumeration</td></tr>
+        <tr><td class="port">3269 <span class="tcp">TCP</span></td><td class="proto-name">GC over SSL</td><td class="desc">Encrypted global catalog</td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header auth">🔐 Auth &amp; Kerberos</div>
+      <table>
+        <tr><td class="port">88 <span class="both">TCP/UDP</span></td><td class="proto-name">Kerberos</td><td class="desc">AD auth — Kerberoasting, Pass-the-Ticket <span class="alert">⚠ AD attack</span></td></tr>
+        <tr><td class="port">464 <span class="both">TCP/UDP</span></td><td class="proto-name">Kpasswd</td><td class="desc">Kerberos password change</td></tr>
+        <tr><td class="port">1812 <span class="udp">UDP</span></td><td class="proto-name">RADIUS Auth</td><td class="desc">Network auth — VPN, Wi-Fi authentication</td></tr>
+        <tr><td class="port">1813 <span class="udp">UDP</span></td><td class="proto-name">RADIUS Acct</td><td class="desc">RADIUS accounting — track user sessions</td></tr>
+        <tr><td class="port">49152+ <span class="tcp">TCP</span></td><td class="proto-name">RPC Dynamic</td><td class="desc">Windows RPC — used in AD replication, DCSync</td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header net">🌍 Network Infrastructure</div>
+      <table>
+        <tr><td class="port">67/68 <span class="udp">UDP</span></td><td class="proto-name">DHCP</td><td class="desc">IP assignment — rogue DHCP server attack</td></tr>
+        <tr><td class="port">123 <span class="udp">UDP</span></td><td class="proto-name">NTP</td><td class="desc">Time sync — NTP amplification DDoS, time skew = Kerberos fail</td></tr>
+        <tr><td class="port">161 <span class="udp">UDP</span></td><td class="proto-name">SNMP</td><td class="desc">Network monitoring — community string harvesting <span class="alert">⚠ misconfig</span></td></tr>
+        <tr><td class="port">162 <span class="udp">UDP</span></td><td class="proto-name">SNMP Trap</td><td class="desc">SNMP alerts sent to manager</td></tr>
+        <tr><td class="port">179 <span class="tcp">TCP</span></td><td class="proto-name">BGP</td><td class="desc">Border Gateway Protocol — route hijacking</td></tr>
+        <tr><td class="port">500 <span class="udp">UDP</span></td><td class="proto-name">IKE / IPSec</td><td class="desc">VPN key exchange</td></tr>
+        <tr><td class="port">4500 <span class="udp">UDP</span></td><td class="proto-name">IPSec NAT-T</td><td class="desc">IPSec NAT traversal</td></tr>
+        <tr><td class="port">1194 <span class="both">TCP/UDP</span></td><td class="proto-name">OpenVPN</td><td class="desc">OpenVPN — watch for rogue VPN tunnels</td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header db">🗄️ Databases</div>
+      <table>
+        <tr><td class="port">1433 <span class="tcp">TCP</span></td><td class="proto-name">MSSQL</td><td class="desc">Microsoft SQL — xp_cmdshell abuse, brute force</td></tr>
+        <tr><td class="port">1521 <span class="tcp">TCP</span></td><td class="proto-name">Oracle DB</td><td class="desc">Oracle — TNS Poison, default creds</td></tr>
+        <tr><td class="port">3306 <span class="tcp">TCP</span></td><td class="proto-name">MySQL</td><td class="desc">MySQL — exposed DBs, SQL injection endpoint</td></tr>
+        <tr><td class="port">5432 <span class="tcp">TCP</span></td><td class="proto-name">PostgreSQL</td><td class="desc">Postgres — COPY TO exfil, RCE via extensions</td></tr>
+        <tr><td class="port">6379 <span class="tcp">TCP</span></td><td class="proto-name">Redis</td><td class="desc">Cache DB — no auth by default, RCE risk <span class="alert">⚠ exposed</span></td></tr>
+        <tr><td class="port">27017 <span class="tcp">TCP</span></td><td class="proto-name">MongoDB</td><td class="desc">NoSQL — unauthenticated access, data dumps <span class="alert">⚠ exposed</span></td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header monitor">📡 Monitoring &amp; Logging</div>
+      <table>
+        <tr><td class="port">514 <span class="udp">UDP</span></td><td class="proto-name">Syslog</td><td class="desc">System logs — UDP, no integrity, log injection possible</td></tr>
+        <tr><td class="port">6514 <span class="tcp">TCP</span></td><td class="proto-name">Syslog TLS</td><td class="desc">Encrypted syslog</td></tr>
+        <tr><td class="port">9200 <span class="tcp">TCP</span></td><td class="proto-name">Elasticsearch</td><td class="desc">Search/SIEM backend — exposed APIs, data leaks <span class="alert">⚠ exposed</span></td></tr>
+        <tr><td class="port">5044 <span class="tcp">TCP</span></td><td class="proto-name">Logstash</td><td class="desc">Log pipeline (ELK) — Beats input</td></tr>
+        <tr><td class="port">5601 <span class="tcp">TCP</span></td><td class="proto-name">Kibana</td><td class="desc">SIEM dashboard — auth bypass CVEs, exposed panels</td></tr>
+        <tr><td class="port">6667 <span class="tcp">TCP</span></td><td class="proto-name">IRC</td><td class="desc">Old C2 channel for botnets <span class="alert">⚠ malware C2</span></td></tr>
+        <tr><td class="port">4444 <span class="tcp">TCP</span></td><td class="proto-name">Metasploit</td><td class="desc">Default Meterpreter shell — immediate red flag <span class="alert">⚠ IOC</span></td></tr>
+      </table>
+    </div>
+
+    <div class="category">
+      <div class="cat-header web">🔧 Windows / AD Specific</div>
+      <table>
+        <tr><td class="port">135 <span class="tcp">TCP</span></td><td class="proto-name">RPC Endpoint</td><td class="desc">Windows RPC mapper — DCOM attacks, recon</td></tr>
+        <tr><td class="port">137 <span class="udp">UDP</span></td><td class="proto-name">NetBIOS-NS</td><td class="desc">Name service — LLMNR/NBT-NS poisoning</td></tr>
+        <tr><td class="port">138 <span class="udp">UDP</span></td><td class="proto-name">NetBIOS-DGM</td><td class="desc">NetBIOS datagram — recon, relay attacks</td></tr>
+        <tr><td class="port">445 <span class="tcp">TCP</span></td><td class="proto-name">SMB</td><td class="desc">Core Windows sharing — PtH, ransomware, EternalBlue</td></tr>
+        <tr><td class="port">593 <span class="tcp">TCP</span></td><td class="proto-name">RPC over HTTP</td><td class="desc">Exchange / Outlook Anywhere — firewall bypass</td></tr>
+        <tr><td class="port">4789 <span class="udp">UDP</span></td><td class="proto-name">VXLAN</td><td class="desc">Virtual overlay networks — VM escape, tunnel abuse</td></tr>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="legend">
+    <span><span class="flag tcp">TCP</span> Transmission Control Protocol</span>
+    <span><span class="flag udp">UDP</span> User Datagram Protocol</span>
+    <span><span class="flag both">TCP/UDP</span> Both</span>
+    <span><span class="alert">⚠ tag</span> High-priority SOC alert trigger</span>
+  </div>
+  <p style="text-align:center; font-size:10px; color:var(--color-text-secondary); margin-top:10px;">
+    SOC Analyst Quick Reference · Print and stick on wall · Review daily until memorised
+  </p>
+</div>
